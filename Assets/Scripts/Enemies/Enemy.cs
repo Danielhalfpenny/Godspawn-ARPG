@@ -1,58 +1,90 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
     public float speed;
     public float attackRange;
+    
+
+    public float aggroRange;
+    
     public CharacterController controller;
+    public SphereCollider sphereCollider;
     public Animator animator;
-    
-    public Transform player;
-    
-    
+
+    private bool currentlyChasing;
+    private GameObject chasing;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        sphereCollider.radius = aggroRange;
+        currentlyChasing = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-        chasePlayer(); // Todo: add agro range
-        
-        if (inRange())
+        if (chasing)
         {
-            attack();
+            Chase();
+            Debug.Log("CHASING");
+            if (inRangeAttack())
+            {
+                attack();
+                Debug.Log("ATTACKING");
+            }
+            else
+            {
+                animator.SetBool("Attacking", false);
+            }
         }
-        else
-        {
-            animator.SetBool("Attacking", false);
-        }
+        // In Attack Range
         
     }
 
-    // Checks if the enemy is in range of a player
-    bool inRange()
+    private void OnCollisionEnter(Collision other)
     {
-        return Vector3.Distance(transform.position, player.position) < attackRange;
+        Debug.Log(other);
     }
     
+
+    // When a object enters the sphere collider, if player -> start chasing TODO: make work
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log(other);
+   
+        if (!other.gameObject.CompareTag("Player")) return;
+        chasing = other.gameObject;
+        Chase();
+        Debug.Log("CHASING");
+
+    }
+
     // Uses Attack animation
-    // TODO: add dodgeable line and damage
-    void attack()
+    // TODO: Damage and visuals
+    private void attack()
     {
         animator.SetBool("Attacking", true);
     }
 
     // Chases player in var player
-    void chasePlayer()
+    private void Chase()
     {
-        transform.LookAt(player.position);
+        transform.LookAt(chasing.transform.position);
         animator.SetBool("Moving", true);
         controller.SimpleMove(transform.forward * speed);
+    }
+    
+    // Checks if the enemy is in range of a player to chase
+    private bool inRangeAggro()
+    {
+        return Vector3.Distance(transform.position, chasing.transform.position) < aggroRange;
+    }
+
+    // Checks if the enemy is in range of a player to attack
+    private bool inRangeAttack()
+    {
+        return Vector3.Distance(transform.position, chasing.transform.position) < attackRange;
     }
 }

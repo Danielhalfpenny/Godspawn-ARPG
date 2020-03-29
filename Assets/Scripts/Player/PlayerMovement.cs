@@ -1,24 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerMovement: MonoBehaviour 
+public class PlayerMovement : MonoBehaviour
 {
 	public Animator animator;
 	public float rotationSpeed = 30;
-	Vector3 inputVec;
-	Vector3 targetDirection;
+	public int moveSpeed = 30; // TODO: implement
+	
+	private Vector3 _inputVec;
+	private Vector3 _targetDirection;
 
+	// Scripts per class
+	private PlayerClass classScript;
+	
 	void Update()
 	{
 		//Get input from controls
 		float z = Input.GetAxisRaw("Horizontal");
 		float x = -(Input.GetAxisRaw("Vertical"));
-		inputVec = new Vector3(x, 0, z);
+		_inputVec = new Vector3(x, 0, z);
 
 		//Apply inputs to animator
 		animator.SetFloat("Input X", z);
 		animator.SetFloat("Input Z", -(x));
-
+		
 		if (x != 0 || z != 0 )  //if there is some input
 		{
 			//set that character is moving
@@ -58,25 +63,25 @@ public class PlayerMovement: MonoBehaviour
 		float h = Input.GetAxisRaw("Horizontal");
 
 		// Target direction relative to the camera
-		targetDirection = h * right + v * forward;
+		_targetDirection = (h * right + v * forward) * moveSpeed;
 	}
 
 	//face character along input direction
 	void RotateTowardMovementDirection()  
 	{
-		if(inputVec != Vector3.zero)
+		if(_inputVec != Vector3.zero)
 		{
-			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(targetDirection), Time.deltaTime * rotationSpeed);
+			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(_targetDirection), Time.deltaTime * rotationSpeed);
 		}
 	}
 
 	void UpdateMovement()
 	{
 		//get movement input from controls
-		Vector3 motion = inputVec;
+		Vector3 motion = _inputVec;
 
 		//reduce input for diagonal movement
-		motion *= (Mathf.Abs(inputVec.x) == 1 && Mathf.Abs(inputVec.z) == 1) ? 0.7f:1;
+		motion *= (Mathf.Abs(_inputVec.x) == 1 && Mathf.Abs(_inputVec.z) == 1) ? 0.7f:1;
 		
 		RotateTowardMovementDirection();  
 		GetCameraRelativeMovement();  
@@ -85,18 +90,22 @@ public class PlayerMovement: MonoBehaviour
 	//Placeholder functions for Animation events
 	void Hit()
 	{
+		
 	}
 
 	void Death()
 	{
+		
 	}
 
 	void FootL()
 	{
+		
 	}
 
 	void FootR()
 	{
+		
 	}
 	
 	
