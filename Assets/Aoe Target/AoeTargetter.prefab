@@ -44,4 +44,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shape: 0
-  Transform: {x: 20, y: 0.1, z: 5}
+  origin: {fileID: 0}
+  Scale: {x: 0, y: 0, z: 0}

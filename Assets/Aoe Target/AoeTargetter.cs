@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -7,7 +8,7 @@ public class AoeTargetter : MonoBehaviour
 {
     public enum Shape { Rectangle, Circle, Cone }
     public Shape shape;
-    
+    public GameObject origin;
     public Vector3 Scale;
 
     private GameObject targetObject;
@@ -32,6 +33,7 @@ public class AoeTargetter : MonoBehaviour
                 break;
         }
 
+        
         targetObject.transform.localScale = Scale; 
 
     }
@@ -39,6 +41,7 @@ public class AoeTargetter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         RaycastHit hit;
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
 
@@ -46,7 +49,8 @@ public class AoeTargetter : MonoBehaviour
         {
             if (hit.collider is TerrainCollider)
             {
-                targetObject.transform.position = hit.point;
+                SetTargetterLocation(hit.point);
+                targetObject.transform.LookAt(hit.point);
             }
         }
 
@@ -69,5 +73,24 @@ public class AoeTargetter : MonoBehaviour
     {
         Destroy(targetObject);
         Destroy(gameObject);
+    }
+
+    void SetTargetterLocation(Vector3 mouseLocation)
+    {
+        var r = 0.5; // Todo: collected from player collider. Radius
+        var originLocation = origin.transform.position;
+        
+        // Set working area to (0, 0, 0)
+        var workingArea = originLocation - mouseLocation ;
+
+        // Calculate touching points on the circum of the circle collider
+        var touchZ = 2 * (r * Math.Cos(-Math.Atan2(workingArea.x, workingArea.z)));
+        var touchX = 2 * (r * Math.Sin(-Math.Atan2(workingArea.x, workingArea.z)));
+        Debug.Log(touchX * 10);
+        Debug.Log(touchZ * 10);
+
+        var newPos = new Vector3(Convert.ToInt64(touchX), 0, -Convert.ToInt64(touchZ));
+        newPos += originLocation;
+        targetObject.transform.position = newPos;
     }
 }

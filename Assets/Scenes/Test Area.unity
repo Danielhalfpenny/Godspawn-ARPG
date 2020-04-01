@@ -196,12 +196,12 @@ PrefabInstance:
     - target: {fileID: 8341951814588981695, guid: b6880f621df055042b5471fda739a0d6,
         type: 3}
       propertyPath: Scale.x
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8341951814588981695, guid: b6880f621df055042b5471fda739a0d6,
         type: 3}
       propertyPath: Scale.z
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8341951814588981695, guid: b6880f621df055042b5471fda739a0d6,
         type: 3}
