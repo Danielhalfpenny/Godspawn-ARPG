@@ -50,7 +50,6 @@ public class AoeTargetter : MonoBehaviour
             if (hit.collider is TerrainCollider)
             {
                 SetTargetterLocation(hit.point);
-                targetObject.transform.LookAt(hit.point);
             }
         }
 
@@ -84,13 +83,18 @@ public class AoeTargetter : MonoBehaviour
         var workingArea = originLocation - mouseLocation ;
 
         // Calculate touching points on the circum of the circle collider
-        var touchZ = 2 * (r * Math.Cos(-Math.Atan2(workingArea.x, workingArea.z)));
-        var touchX = 2 * (r * Math.Sin(-Math.Atan2(workingArea.x, workingArea.z)));
-        Debug.Log(touchX * 10);
-        Debug.Log(touchZ * 10);
+        var touchZ = 9 * (r * Math.Cos(-Math.Atan2(workingArea.x, workingArea.z)));
+        var touchX = 9 * (r * Math.Sin(-Math.Atan2(workingArea.x, workingArea.z)));
 
-        var newPos = new Vector3(Convert.ToInt64(touchX), 0, -Convert.ToInt64(touchZ));
+        
+        
+        var newPos = new Vector3(Convert.ToInt16(touchX), 0, -Convert.ToInt16(touchZ));
         newPos += originLocation;
         targetObject.transform.position = newPos;
+        
+        Debug.Log(touchX);
+        // Debug.Log(touchZ);
+   
+        targetObject.transform.LookAt(originLocation);
     }
 }
