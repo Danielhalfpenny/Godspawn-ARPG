@@ -9,8 +9,10 @@ public class AoeTargetter : MonoBehaviour
     public enum Shape { Rectangle, Circle, Cone }
     public Shape shape;
     public GameObject origin;
-    public Vector3 Scale;
-
+    public float width, length;
+    public float speed;
+    
+    private bool isTargetting;
     private GameObject targetObject;
     
     // Start is called before the first frame update
@@ -20,44 +22,47 @@ public class AoeTargetter : MonoBehaviour
         switch (shape)
         {
             case Shape.Rectangle:
-                targetObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                targetObject = Instantiate(Resources.Load("Rectangle Targetter", typeof(GameObject)) as GameObject);
                 break;
             case Shape.Circle:
                 targetObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 break;
             case Shape.Cone:
-                targetObject = GameObject.CreatePrimitive(PrimitiveType.Sphere); // TODO: find a cone shape
+                targetObject = Instantiate(Resources.Load("Rectangle Targetter") as GameObject);// TODO: find a cone shape
                 break;
             default:
                 Debug.Log("Unknown Shape");
                 break;
         }
 
-        
-        targetObject.transform.localScale = Scale; 
+        isTargetting = true;
+        targetObject.transform.localScale = new Vector3(width, 0.01f, length); 
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-        RaycastHit hit;
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
 
-        if (Physics.Raycast(ray, out hit))
+        if (isTargetting)
         {
-            if (hit.collider is TerrainCollider)
+            RaycastHit hit;
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
+
+            if (Physics.Raycast(ray, out hit))
             {
-                SetTargetterLocation(hit.point);
+                if (hit.collider is TerrainCollider)
+                {
+                    SetTargetterLocation(hit.point);
+                }
             }
-        }
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            var pos = Activate();
-            Debug.Log(pos);
-            StopTargeting();
+            if (Input.GetMouseButtonDown(0))
+            {
+                var pos = Activate();
+                Debug.Log(pos);
+                StopTargeting();
+            }
         }
     }
 
@@ -72,29 +77,17 @@ public class AoeTargetter : MonoBehaviour
     {
         Destroy(targetObject);
         Destroy(gameObject);
+        isTargetting = false;
     }
 
     void SetTargetterLocation(Vector3 mouseLocation)
     {
-        var r = 0.5; // Todo: collected from player collider. Radius
-        var originLocation = origin.transform.position;
-        
-        // Set working area to (0, 0, 0)
-        var workingArea = originLocation - mouseLocation ;
-
-        // Calculate touching points on the circum of the circle collider
-        var touchZ = 9 * (r * Math.Cos(-Math.Atan2(workingArea.x, workingArea.z)));
-        var touchX = 9 * (r * Math.Sin(-Math.Atan2(workingArea.x, workingArea.z)));
-
-        
-        
-        var newPos = new Vector3(Convert.ToInt16(touchX), 0, -Convert.ToInt16(touchZ));
-        newPos += originLocation;
+        var newPos = origin.transform.position;
         targetObject.transform.position = newPos;
-        
-        Debug.Log(touchX);
-        // Debug.Log(touchZ);
-   
-        targetObject.transform.LookAt(originLocation);
+
+        var lookPos = mouseLocation - targetObject.transform.position;
+        lookPos.y = 0;
+        var rotation = Quaternion.LookRotation(lookPos);
+        targetObject.transform.rotation = Quaternion.Slerp(targetObject.transform.rotation, rotation, Time.deltaTime * speed);
     }
 }

@@ -208,6 +208,16 @@ PrefabInstance:
       propertyPath: Scale.y
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 8341951814588981695, guid: b6880f621df055042b5471fda739a0d6,
+        type: 3}
+      propertyPath: width
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8341951814588981695, guid: b6880f621df055042b5471fda739a0d6,
+        type: 3}
+      propertyPath: length
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b6880f621df055042b5471fda739a0d6, type: 3}
 --- !u!1 &500701385
