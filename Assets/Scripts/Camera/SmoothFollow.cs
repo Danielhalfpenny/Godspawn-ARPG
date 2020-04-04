@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class SmoothFollow : MonoBehaviour
 {
@@ -10,17 +11,18 @@ public class SmoothFollow : MonoBehaviour
 	public float offSetX, offSetY, offSetZ;
 	public bool LockX, LockY, LockZ;
 	public bool useSmoothing;
-	public Transform target;
+	private GameObject target;
 	public GameObject hudElements;
 	#endregion
 	
 	#region Private Properties
 	private Transform thisTransform;
+	
 	private Vector3 velocity;
 	#endregion
-
 	bool hudActive = true;
 	
+
 	private void Awake()
 	{
 		thisTransform = transform;
@@ -29,6 +31,8 @@ public class SmoothFollow : MonoBehaviour
 
 	void Update()
 	{
+		target = GameObject.FindWithTag("Player");
+
 		if(hudActive)
 		{
 			if (Input.GetKeyDown(KeyCode.H))
@@ -56,15 +60,15 @@ public class SmoothFollow : MonoBehaviour
 		
 		if (useSmoothing)
 		{
-			newPos.x = Mathf.SmoothDamp(thisTransform.position.x, target.position.x + offSetX, ref velocity.x, SMOOTH_TIME);
-			newPos.y = Mathf.SmoothDamp(thisTransform.position.y, target.position.y + offSetY, ref velocity.y, SMOOTH_TIME);
-			newPos.z = Mathf.SmoothDamp(thisTransform.position.z, target.position.z + offSetZ, ref velocity.z, SMOOTH_TIME);
+			newPos.x = Mathf.SmoothDamp(thisTransform.position.x, target.transform.position.x + offSetX, ref velocity.x, SMOOTH_TIME);
+			newPos.y = Mathf.SmoothDamp(thisTransform.position.y, target.transform.position.y + offSetY, ref velocity.y, SMOOTH_TIME);
+			newPos.z = Mathf.SmoothDamp(thisTransform.position.z, target.transform.position.z + offSetZ, ref velocity.z, SMOOTH_TIME);
 		}
 		else
 		{
-			newPos.x = target.position.x;
-			newPos.y = target.position.y;
-			newPos.z = target.position.z;
+			newPos.x = target.transform.position.x;
+			newPos.y = target.transform.position.y;
+			newPos.z = target.transform.position.z;
 		}
 		
 		#region Locks
