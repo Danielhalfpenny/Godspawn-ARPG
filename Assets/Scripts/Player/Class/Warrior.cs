@@ -14,7 +14,6 @@ public class Warrior : MonoBehaviour
 
     private void Start()
     {
-        _characterController = GetComponent<CharacterController>();
         _targetObj = Instantiate(Resources.Load("Targetter", typeof(GameObject)) as GameObject, transform);
         _targetScript = _targetObj.GetComponent<AoeTargetter>();
         _isDashing = false;

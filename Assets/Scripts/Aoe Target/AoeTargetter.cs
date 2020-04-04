@@ -48,11 +48,15 @@ public class AoeTargetter : MonoBehaviour
     }
     
     
-    // Deletes targetter and returns it's rotation
+    // Deletes targetter and returns it's end position
     public Vector3 Activate()
     {
         StopTargeting();
-        return targetObject.transform.position + new Vector3(8, 0, 0);
+        var output = targetObject.transform.position;
+        var angle = Math.Floor(targetObject.transform.eulerAngles.y);
+        output.x += Convert.ToInt16(length * Math.Sin(angle * Math.PI / 180F));
+        output.z += Convert.ToInt16(length * Math.Cos(angle * Math.PI / 180F));
+        return output; // TODO: testing, will be changed
     }
     
     // Removes the target and the Targetter entity
