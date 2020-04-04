@@ -12,7 +12,6 @@ public class PlayerMovement : MonoBehaviour
 
 	// Scripts per class
 	private PlayerClass classScript;
-	
 	void Update()
 	{
 		//Get input from controls
