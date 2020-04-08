@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using UnityEngine;
+
 
 public class SmoothFollow : MonoBehaviour
 {
@@ -12,17 +13,14 @@ public class SmoothFollow : MonoBehaviour
 	public bool LockX, LockY, LockZ;
 	public bool useSmoothing;
 	private GameObject target;
+
 	public GameObject hudElements;
 	#endregion
 	
 	#region Private Properties
 	private Transform thisTransform;
-	
 	private Vector3 velocity;
-	#endregion
 	bool hudActive = true;
-	
-
 	private void Awake()
 	{
 		thisTransform = transform;
@@ -60,6 +58,7 @@ public class SmoothFollow : MonoBehaviour
 		
 		if (useSmoothing)
 		{
+
 			newPos.x = Mathf.SmoothDamp(thisTransform.position.x, target.transform.position.x + offSetX, ref velocity.x, SMOOTH_TIME);
 			newPos.y = Mathf.SmoothDamp(thisTransform.position.y, target.transform.position.y + offSetY, ref velocity.y, SMOOTH_TIME);
 			newPos.z = Mathf.SmoothDamp(thisTransform.position.z, target.transform.position.z + offSetZ, ref velocity.z, SMOOTH_TIME);
