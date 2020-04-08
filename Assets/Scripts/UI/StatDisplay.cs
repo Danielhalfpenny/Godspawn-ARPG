@@ -25,7 +25,7 @@ public class StatDisplay : MonoBehaviour
 
         StatText.text = "Health: " + Health + "/" + MaxHealth +"\nMana: " + Mana + "/" + MaxMana;
 
-        if (Input.GetKeyDown(KeyCode.KeypadMinus) && Health > 0)
+        if (Input.GetKeyDown(KeyCode.KeypadMinus))
         {
             Health--;
         }
