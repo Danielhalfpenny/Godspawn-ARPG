@@ -1,111 +1,75 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
+using UnityEngine.SocialPlatforms;
+using Random = System.Random;
 
 public class PlayerMovement : MonoBehaviour
 {
-	public Animator animator;
-	public float rotationSpeed = 30;
-	public int moveSpeed = 30; // TODO: implement
 	
-	private Vector3 _inputVec;
-	private Vector3 _targetDirection;
-
-	// Scripts per class
-	private PlayerClass classScript;
+	#region Public Properties
+	public CharacterController controller;
+	public Animator animator;
+	public int moveSpeed = 30;
+	#endregion
+	
+	#region Private Properties
+	private bool canMove = true; // locks controls if false.
+	private Vector3 _playerMovement;
+	private int idleTimer;
+	#endregion
+	
+	
 	void Update()
 	{
-		//Get input from controls
-		float z = Input.GetAxisRaw("Horizontal");
-		float x = -(Input.GetAxisRaw("Vertical"));
-		_inputVec = new Vector3(x, 0, z);
-
-		//Apply inputs to animator
-		animator.SetFloat("Input X", z);
-		animator.SetFloat("Input Z", -(x));
-		
-		if (x != 0 || z != 0 )  //if there is some input
+		if (canMove)
 		{
-			//set that character is moving
-			animator.SetBool("Moving", true);
+			MovePlayer();
+		}
+	}
+
+	private void MovePlayer()
+	{
+		//Get input from controls
+		var horizontal = Input.GetAxisRaw("Horizontal");
+		var vertical = Input.GetAxisRaw("Vertical");
+
+		if (horizontal != 0 || vertical != 0)
+		{
+			animator.SetTrigger("ExitIdle");
+			animator.SetInteger("Speed", 1);
 		}
 		else
 		{
-			//character is not moving
-			animator.SetBool("Moving", false);
+			animator.ResetTrigger("ExitIdle");
+			idleTimer++;
+			if (idleTimer > 500)
+			{
+				RandomIdleAnimation();
+			}
+			animator.SetInteger("Speed", 0);
 		}
 		
-		//update character position and facing
-		UpdateMovement();
-	}
-
-	public IEnumerator COStunPause(float pauseTime)
-	{
-		yield return new WaitForSeconds(pauseTime);
-	}
-
-	//converts control input vectors into camera facing vectors
-	void GetCameraRelativeMovement()
-	{  
-		Transform cameraTransform = Camera.main.transform;
-
-		// Forward vector relative to the camera along the x-z plane   
-		Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);
-		forward.y = 0;
-		forward = forward.normalized;
-
-		// Right vector relative to the camera
-		// Always orthogonal to the forward vector
-		Vector3 right= new Vector3(forward.z, 0, -forward.x);
-
-		//directional inputs
-		float v = Input.GetAxisRaw("Vertical");
-		float h = Input.GetAxisRaw("Horizontal");
-
-		// Target direction relative to the camera
-		_targetDirection = (h * right + v * forward) * moveSpeed;
-	}
-
-	//face character along input direction
-	void RotateTowardMovementDirection()  
-	{
-		if(_inputVec != Vector3.zero)
-		{
-			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(_targetDirection), Time.deltaTime * rotationSpeed);
-		}
-	}
-
-	void UpdateMovement()
-	{
-		//get movement input from controls
-		Vector3 motion = _inputVec;
-
-		//reduce input for diagonal movement
-		motion *= (Mathf.Abs(_inputVec.x) == 1 && Mathf.Abs(_inputVec.z) == 1) ? 0.7f:1;
+		var move = transform.right * horizontal + transform.forward * vertical;
 		
-		RotateTowardMovementDirection();  
-		GetCameraRelativeMovement();  
+		controller.Move(move * (moveSpeed * Time.deltaTime));
 	}
 
-	//Placeholder functions for Animation events
-	void Hit()
+	public void LockControls()
 	{
-		
+		canMove = false;
 	}
 
-	void Death()
+	public void UnlockControls()
 	{
-		
+		canMove = true;
 	}
 
-	void FootL()
+	private void RandomIdleAnimation()
 	{
-		
+		animator.SetInteger("Idle", new Random().Next(1,5));
+		idleTimer = 0;
 	}
 
-	void FootR()
-	{
-		
-	}
-	
-	
+
 }
