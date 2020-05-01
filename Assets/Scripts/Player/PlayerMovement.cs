@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
 	#endregion
 	
 	#region Private Properties
-	private bool canMove = true; // locks controls if false.
+	private bool canAct = true; // locks controls if false.
 	private Vector3 _playerMovement;
 	private int idleTimer;
 	#endregion
@@ -22,8 +22,18 @@ public class PlayerMovement : MonoBehaviour
 	
 	void Update()
 	{
-		if (canMove)
+		if (canAct)
 		{
+			if (Input.GetMouseButtonDown(0))
+			{
+				//light attack
+				StartCoroutine(LightAttackCoroutine());
+			}
+			else if (Input.GetMouseButtonDown(1))
+			{
+				//heavy attack
+				StartCoroutine(HeavyAttackCoroutine());
+			}
 			MovePlayer();
 		}
 	}
@@ -36,18 +46,25 @@ public class PlayerMovement : MonoBehaviour
 
 		if (horizontal != 0 || vertical != 0)
 		{
+			if (vertical == 0)
+				animator.SetInteger("Strafe", (int) horizontal); 
+			else
+				animator.SetInteger("Direction", (int) vertical);
 			animator.SetTrigger("ExitIdle");
 			animator.SetInteger("Speed", 1);
 		}
 		else
 		{
+			animator.SetInteger("Strafe", 0);
+			animator.SetInteger("Direction", 0);
+
 			animator.ResetTrigger("ExitIdle");
+			animator.SetInteger("Speed", 0);
 			idleTimer++;
-			if (idleTimer > 500)
+			if (idleTimer > 5000)
 			{
 				RandomIdleAnimation();
 			}
-			animator.SetInteger("Speed", 0);
 		}
 		
 		var move = transform.right * horizontal + transform.forward * vertical;
@@ -57,19 +74,39 @@ public class PlayerMovement : MonoBehaviour
 
 	public void LockControls()
 	{
-		canMove = false;
+		canAct = false;
 	}
 
 	public void UnlockControls()
 	{
-		canMove = true;
+		canAct = true;
 	}
 
 	private void RandomIdleAnimation()
 	{
 		animator.SetInteger("Idle", new Random().Next(1,5));
+		Debug.Log("Random Idle Animation");
+		animator.SetInteger("Idle", 0);
+
 		idleTimer = 0;
 	}
 
+	IEnumerator LightAttackCoroutine()
+	{
+		canAct = false;
+		animator.SetInteger("Attack", 1);
+		yield return new WaitForSeconds(1f);
+		animator.SetInteger("Attack", 0);
+		canAct = true;
+	}
+	
+	IEnumerator HeavyAttackCoroutine()
+	{
+		canAct = false;
+		animator.SetInteger("Attack", 2);
+		yield return new WaitForSeconds(1.5f);
+		animator.SetInteger("Attack", 0);
+		canAct = true;
+	}
 
 }
