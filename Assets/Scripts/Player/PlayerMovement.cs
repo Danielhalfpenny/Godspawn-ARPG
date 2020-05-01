@@ -10,7 +10,8 @@ public class PlayerMovement : MonoBehaviour
 	#region Public Properties
 	public CharacterController controller;
 	public Animator animator;
-	public int moveSpeed = 30;
+	public float moveSpeed = 30;
+	public int damage = 0;
 	#endregion
 	
 	#region Private Properties
@@ -18,7 +19,6 @@ public class PlayerMovement : MonoBehaviour
 	private Vector3 _playerMovement;
 	private int idleTimer;
 	#endregion
-	
 	
 	void Update()
 	{
@@ -43,13 +43,17 @@ public class PlayerMovement : MonoBehaviour
 		//Get input from controls
 		var horizontal = Input.GetAxisRaw("Horizontal");
 		var vertical = Input.GetAxisRaw("Vertical");
-
+		var speed = moveSpeed;
 		if (horizontal != 0 || vertical != 0)
 		{
 			if (vertical == 0)
 				animator.SetInteger("Strafe", (int) horizontal); 
 			else
 				animator.SetInteger("Direction", (int) vertical);
+			if (vertical == -1)
+			{
+				speed *= 0.5f;
+			}
 			animator.SetTrigger("ExitIdle");
 			animator.SetInteger("Speed", 1);
 		}
@@ -69,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
 		
 		var move = transform.right * horizontal + transform.forward * vertical;
 		
-		controller.Move(move * (moveSpeed * Time.deltaTime));
+		controller.Move(move * (speed * Time.deltaTime));
 	}
 
 	public void LockControls()
@@ -94,18 +98,24 @@ public class PlayerMovement : MonoBehaviour
 	IEnumerator LightAttackCoroutine()
 	{
 		canAct = false;
+		damage = 10;
 		animator.SetInteger("Attack", 1);
 		yield return new WaitForSeconds(1f);
 		animator.SetInteger("Attack", 0);
+		damage = 0;
 		canAct = true;
 	}
 	
 	IEnumerator HeavyAttackCoroutine()
 	{
 		canAct = false;
+		damage = 25;
 		animator.SetInteger("Attack", 2);
+		var move = transform.right * 0 + transform.forward * 2;
+		controller.Move(move * (moveSpeed * Time.deltaTime));
 		yield return new WaitForSeconds(1.5f);
 		animator.SetInteger("Attack", 0);
+		damage = 0;
 		canAct = true;
 	}
 
