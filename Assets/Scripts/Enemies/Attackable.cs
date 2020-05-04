@@ -27,14 +27,14 @@ public class Attackable : MonoBehaviour
     {
         if (other.isTrigger)
         {
-            var damage = other.GetComponentInParent<PlayerMovement>().damage;
-            if (damage > 0)
-            {
-                Debug.Log($"Did {damage} damage to object");
-                HitAnimation();
-                TakeDamage(damage);
-                other.GetComponentInParent<PlayerMovement>().damage = 0;
-            }
+            // var damage = other.GetComponentInParent<PlayerStats>().damage;
+            // if (damage > 0)
+            // {
+            //     Debug.Log($"Did {damage} damage to object");
+            //     HitAnimation();
+            //     TakeDamage(damage);
+            //     other.GetComponentInParent<PlayerStats>().damage = 0;
+            // }
         }
     }
 
@@ -54,7 +54,7 @@ public class Attackable : MonoBehaviour
 
     private void OnDeath()
     {
-        animator.SetInteger("Death", new Random().Next(1,2));
+        animator.SetInteger("Death", 1);
         Destroy(healthBar.GetComponentInParent<Canvas>());
         Debug.Log("I died");
     }

@@ -12,7 +12,7 @@ public class CameraFollow : MonoBehaviour
 	public float clampAngle = 80.0f;
 	public float inputSensitivity = 150.0f;
 	public float distanceFromPlayer = 5;
-	public float zoomSpeed = 5f;
+	
 	#endregion
 	#region private properties
 	private float rotY = 0.0f;
@@ -22,6 +22,7 @@ public class CameraFollow : MonoBehaviour
 	private float finalInputX;
 	private float finalInputZ;
 	private Camera cameraObj;
+	private PlayerMovement playerMovement;
 	#endregion
 	
 	private void Start()
@@ -33,6 +34,7 @@ public class CameraFollow : MonoBehaviour
 		Cursor.lockState = CursorLockMode.Locked; // Locks in middle of screen
 		Cursor.visible = false; // Hides cursor
 		cameraObj.transform.position = new Vector3(0.0f, 2.0f, distanceFromPlayer);
+		playerMovement = playerObj.GetComponent<PlayerMovement>();
 	}
 
 	private void Update()
@@ -52,12 +54,12 @@ public class CameraFollow : MonoBehaviour
 		var localRotation = Quaternion.Euler(rotX, rotY, 0.0f);
 		transform.rotation = localRotation;
 
-		var speed = playerObj.GetComponent<PlayerMovement>().animator.GetInteger("Speed");
-		if (speed != 0)
+		if (!playerMovement.IsMoving())
 		{
 			var playerRotation = Quaternion.Euler(0.0f, rotY, 0.0f);
 			playerObj.transform.rotation = playerRotation;
 		}
+		
 	}
 
 	private void LateUpdate()
