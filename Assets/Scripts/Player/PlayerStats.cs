@@ -21,7 +21,7 @@ public class PlayerStats : MonoBehaviour
     {
         GreatSword,
         Bow,
-        NoWeapon
+        Caster
     }
 
 
@@ -37,7 +37,9 @@ public class PlayerStats : MonoBehaviour
         // Great Sword -> attach RightHand -> transform(0.055, -0.036, -0.054) -> rotation (0, 30, 0)
         switch (playerType) 
         {
-            case PlayerType.NoWeapon:
+            case PlayerType.Caster:
+                animator.runtimeAnimatorController = Resources.Load("AnimationControllers/CasterAnimationController") as RuntimeAnimatorController;
+                Player.AddComponent<Caster>();
                 break;
             
             case PlayerType.GreatSword:
