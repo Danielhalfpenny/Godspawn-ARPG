@@ -8,6 +8,9 @@ public class Bow : MonoBehaviour
     private PlayerMovement playerMovement;
     private PlayerStats playerStats;
     private Animator animator;
+    private Animator bowAnimator;
+
+    private GameObject arrowObj;
 
     // Start is called before the first frame update
     void Start()
@@ -15,6 +18,8 @@ public class Bow : MonoBehaviour
         playerMovement = GetComponent<PlayerMovement>();
         playerStats = GetComponent<PlayerStats>();
         animator = GetComponent<Animator>();
+        bowAnimator = playerStats.Weapon.GetComponent<Animator>();
+        arrowObj = Resources.Load("PlayerWeapons/Arrow") as GameObject;
     }
 
     // Update is called once per frame
@@ -39,7 +44,13 @@ public class Bow : MonoBehaviour
     {
         playerMovement.canAct = false;
         animator.SetInteger("Attack", 1);
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.3f);
+        bowAnimator.SetBool("PullBack", true);
+        yield return new WaitForSeconds(0.5f);
+        var firedArrow = Instantiate(arrowObj, playerStats.RightHand.transform);
+        firedArrow.tag = "ProjectileAttack";
+        firedArrow.GetComponent<Arrow>().Fire();
+        bowAnimator.SetBool("PullBack", false);
         animator.SetInteger("Attack", 0);
         playerMovement.canAct = true;
     }
