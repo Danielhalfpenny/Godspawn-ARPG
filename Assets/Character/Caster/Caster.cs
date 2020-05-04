@@ -8,13 +8,14 @@ public class Caster : MonoBehaviour
     private PlayerMovement playerMovement;
     private PlayerStats playerStats;
     private Animator animator;
-
+    private GameObject fireBoltObj;
     // Start is called before the first frame update
     void Start()
     {
         playerMovement = GetComponent<PlayerMovement>();
         playerStats = GetComponent<PlayerStats>();
         animator = GetComponent<Animator>();
+        fireBoltObj = Resources.Load("PlayerWeapons/Firebolt") as GameObject;
     }
 
     // Update is called once per frame
@@ -39,7 +40,10 @@ public class Caster : MonoBehaviour
     {
         playerMovement.canAct = false;
         animator.SetInteger("Attack", 1);
-        yield return new WaitForSeconds(1f);
+        var castedFirebolt = Instantiate(fireBoltObj, playerStats.RightHand.transform);
+        castedFirebolt.tag = "ProjectileAttack";
+        yield return new WaitForSeconds(0.8f);
+        castedFirebolt.GetComponent<Firebolt>().Fire();
         animator.SetInteger("Attack", 0);
         playerMovement.canAct = true;
     }

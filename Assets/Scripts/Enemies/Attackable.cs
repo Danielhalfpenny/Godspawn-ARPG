@@ -25,16 +25,19 @@ public class Attackable : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.isTrigger)
+        if (!other.isTrigger) return;
+        var weapon = other.GetComponent<DamageAttack>();
+        if (weapon.damage == 0) return;
+        Debug.Log($"Did {weapon.damage} damage to object");
+        HitAnimation();
+        TakeDamage(weapon.damage);
+        if (other.CompareTag("ProjectileAttack"))
         {
-            // var damage = other.GetComponentInParent<PlayerStats>().damage;
-            // if (damage > 0)
-            // {
-            //     Debug.Log($"Did {damage} damage to object");
-            //     HitAnimation();
-            //     TakeDamage(damage);
-            //     other.GetComponentInParent<PlayerStats>().damage = 0;
-            // }
+            Destroy(other.gameObject);
+        }
+        else if (other.CompareTag("MeleeAttack"))
+        {
+            weapon.damage = 0;
         }
     }
 

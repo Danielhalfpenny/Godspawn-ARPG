@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class GreatSword : MonoBehaviour
 {
-
+    public int heavyAttackDamage = 50;
+    public int lightAttackDamage = 25;
+    
     private PlayerMovement playerMovement;
     private PlayerStats playerStats;
     private Animator animator;
+    private DamageAttack weaponDamage;
 
     // Start is called before the first frame update
     void Start()
     {
+        weaponDamage = GetComponentInChildren<DamageAttack>();
+        weaponDamage.damage = 0;
         playerMovement = GetComponent<PlayerMovement>();
         playerStats = GetComponent<PlayerStats>();
         animator = GetComponent<Animator>();
@@ -37,20 +42,24 @@ public class GreatSword : MonoBehaviour
     
     IEnumerator LightAttackCoroutine()
     {
+        weaponDamage.damage = lightAttackDamage;
         playerMovement.canAct = false;
         animator.SetInteger("Attack", 1);
         yield return new WaitForSeconds(1f);
         animator.SetInteger("Attack", 0);
+        weaponDamage.damage = 0;
         playerMovement.canAct = true;
     }
 	
     IEnumerator HeavyAttackCoroutine()
     {
+        weaponDamage.damage = heavyAttackDamage;
         playerMovement.canAct = false;
         animator.SetInteger("Attack", 2);
         var move = transform.right * 0 + transform.forward * 2;
         yield return new WaitForSeconds(1.5f);
         animator.SetInteger("Attack", 0);
+        weaponDamage.damage = 0;
         playerMovement.canAct = true;
     }
 }
