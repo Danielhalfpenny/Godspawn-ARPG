@@ -17,11 +17,9 @@ public class Attackable : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (health <= 0 && !dead)
-        {
-            OnDeath();
-        }
+        
     }
+    
     
     private void OnTriggerEnter(Collider other)
     {
@@ -29,7 +27,15 @@ public class Attackable : MonoBehaviour
         var weapon = other.GetComponent<DamageAttack>();
         if (weapon.damage == 0) return;
         Debug.Log($"Did {weapon.damage} damage to object");
-        HitAnimation();
+
+        if (health - weapon.damage <= 0 && !dead)
+        {
+            OnDeath();
+        }
+        else
+        {
+            HitAnimation();
+        }
         TakeDamage(weapon.damage);
         if (other.CompareTag("ProjectileAttack"))
         {
@@ -58,6 +64,7 @@ public class Attackable : MonoBehaviour
     private void OnDeath()
     {
         animator.SetInteger("Death", 1);
+        dead = true;
         Destroy(healthBar.GetComponentInParent<Canvas>());
         Debug.Log("I died");
     }
@@ -65,6 +72,11 @@ public class Attackable : MonoBehaviour
     {
         health -= damage;
         healthBar.fillAmount = (float) health / maxHealth;
+    }
+
+    public bool IsDead()
+    {
+        return dead;
     }
     
     
