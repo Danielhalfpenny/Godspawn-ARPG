@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
+
+    #region private properties 
+
+    public Inventory inventory;
+
+    #endregion
+    
     #region public properties
 
     public PlayerType playerType;
@@ -15,7 +22,6 @@ public class PlayerStats : MonoBehaviour
     public GameObject Player;
     public GameObject LeftHand;
     public GameObject RightHand;
-
     public GameObject Weapon;
     #endregion
     
@@ -25,11 +31,11 @@ public class PlayerStats : MonoBehaviour
         Bow,
         Caster
     }
-
-
-
-    private void Start()
+    
+    private void Awake()
     {
+        inventory = GetComponent<Inventory>();
+        
         switch (playerType) 
         {
             case PlayerType.Caster:

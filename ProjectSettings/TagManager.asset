@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - ProjectileAttack
   - MeleeAttack
+  - Item
   layers:
   - Default
   - TransparentFX
