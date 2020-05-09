@@ -25,6 +25,15 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.CompareTag("Item"))
+		{
+			other.GetComponent<Item>().PickUp(gameObject);
+		}
+		
+	}
+
 	private void MovePlayer()
 	{
 		//Get input from controls
