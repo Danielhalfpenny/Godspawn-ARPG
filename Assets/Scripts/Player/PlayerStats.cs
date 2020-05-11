@@ -9,12 +9,10 @@ public class PlayerStats : MonoBehaviour
     #region private properties 
 
     public Inventory inventory;
-
+    public StaticVars staticVars;
     #endregion
     
     #region public properties
-
-    public PlayerType playerType;
     public int health;
     public int maxHealth;
     public static float moveSpeed = 5;
@@ -23,6 +21,10 @@ public class PlayerStats : MonoBehaviour
     public GameObject LeftHand;
     public GameObject RightHand;
     public GameObject Weapon;
+    #endregion
+
+    #region private properties
+    private PlayerType playerType;
     #endregion
     
     public enum PlayerType
@@ -35,6 +37,8 @@ public class PlayerStats : MonoBehaviour
     private void Awake()
     {
         inventory = GetComponent<Inventory>();
+        staticVars = GetComponent<StaticVars>();
+        playerType = StaticVars.playerType;
         
         switch (playerType) 
         {
